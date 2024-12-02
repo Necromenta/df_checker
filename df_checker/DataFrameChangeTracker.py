@@ -61,6 +61,8 @@ def track_dataframe_changes(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(*args, **kwargs):
         # Find DataFrame in args or kwargs
+        # The way wrappers work is that these args are inherited from the function
+        # that is being wrapped.
         df_before = None
         for arg in args:
             if isinstance(arg, pd.DataFrame):
@@ -73,8 +75,10 @@ def track_dataframe_changes(func: Callable) -> Callable:
                     df_before = arg.copy()
                     break
 
+        # Here is the wrapped function actually being executed
         result = func(*args, **kwargs)
 
+        # Check if the result is a DataFrame and if the DF is not None 
         if isinstance(result, pd.DataFrame) and df_before is not None:
             changes = DataFrameChangeTracker.compare_df(df_before, result)
 
