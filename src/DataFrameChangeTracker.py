@@ -4,9 +4,9 @@ DataFrameChangeTracker.py
 This module provides a decorator to track changes to DataFrames between function calls.
 """
 
+from dataclasses import dataclass, field
 from functools import wraps
 from typing import Callable, Dict, List, Set
-from dataclasses import dataclass, field
 
 import pandas as pd
 from tabulate import tabulate
@@ -134,7 +134,7 @@ class DataFrameChangeTracker:
         df_before: pd.DataFrame,
         df_after: pd.DataFrame,
         function_name: str | None = None,
-    ) -> None:
+    ) -> DataFrameChanges:
         """Analyze and print changes between two DataFrames.
 
         Args:
@@ -159,6 +159,8 @@ class DataFrameChangeTracker:
             DataFrameChangeTracker._print_content_changes(
                 df_before, df_after, changes.content_changes
             )
+
+        return changes
 
     @staticmethod
     def track_dataframe_changes(func: Callable) -> Callable:
